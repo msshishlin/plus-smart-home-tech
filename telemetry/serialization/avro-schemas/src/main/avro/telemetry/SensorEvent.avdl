@@ -1,4 +1,110 @@
 @namespace("ru.yandex.practicum.kafka.telemetry.event")
 protocol SensorEventProtocol {
+	/**
+	 * Данные с климатического датчика.
+ 	 */
+	record ClimateSensorAvro {
+		/**
+		 * Температура в градусах Цельсия.
+ 		 */
+		int temperature_c;
+		/**
+		 * Уровень влажности.
+ 		 */
+		int humidity;
+		/**
+		 * Уровень углекислого газа.
+ 		 */
+		int co2_level;
+	}
 
+	/**
+	 * Данные с датчика света.
+ 	 */
+	record LightSensorAvro {
+		/**
+		 * Качество сигнала связи.
+ 		 */
+		int link_quality;
+		/**
+		 * Уровень освещённости.
+ 		 */
+		int luminosity;
+	}
+
+	/**
+	 * Данные с датчика движения.
+ 	 */
+	record MotionSensorAvro {
+		/**
+		 * Качество сигнала связи.
+ 		 */
+		int link_quality;
+		/**
+		 * Обнаружено ли движение.
+ 		 */
+		boolean motion;
+		/**
+		 * Уровень напряжения.
+ 		 */
+		int voltage;
+	}
+
+	/**
+	 * Данные с датчика переключателя.
+ 	 */
+	record SwitchSensorAvro {
+		/**
+		 * Текущее состояние переключателя (включено/выключено).
+ 		 */
+		boolean state;
+	}
+
+	/**
+	 * Данные с датчика температуры.
+ 	 */
+	record TemperatureSensorAvro {
+		/**
+		 * Идентификатор датчика.
+ 		 */
+		string id;
+		/**
+		 * Идентификатор хаба, к которому подключён датчик.
+ 		 */
+		string hubId;
+		/**
+		 * Метка времени, указывающая, когда произошло событие телеметрии.
+ 		 */
+		timestamp_ms timestamp;
+		/**
+		 * Температура в градусах Цельсия.
+ 		 */
+		int temperature_c;
+		/**
+		 * Температура в градусах Фаренгейта.
+ 		 */
+		int temperature_f;
+	}
+
+	/**
+	 * Данные события, связанного с сенсором.
+ 	 */
+	record SensorEventAvro {
+		/**
+		 * Идентификатор сенсора.
+ 		 */
+		string id;
+		/**
+		 * Идентификатор хаба, к которому подключён сенсор.
+ 		 */
+		string hubId;
+		/**
+		 * Метка времени, указывающая, когда произошло событие телеметрии.
+ 		 */
+		timestamp_ms timestamp;
+		/**
+		 * Поле, содержащее данные одного из датчиков.
+ 		 */
+		union{ClimateSensorAvro, LightSensorAvro, MotionSensorAvro, SwitchSensorAvro, TemperatureSensorAvro} payload;
+	}
 }
