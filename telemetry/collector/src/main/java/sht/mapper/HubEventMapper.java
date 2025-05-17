@@ -3,11 +3,9 @@ package sht.mapper;
 import org.apache.avro.specific.SpecificRecordBase;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
-import ru.yandex.practicum.kafka.telemetry.event.DeviceAddedEventAvro;
-import ru.yandex.practicum.kafka.telemetry.event.DeviceRemovedEventAvro;
-import ru.yandex.practicum.kafka.telemetry.event.ScenarioAddedEventAvro;
-import ru.yandex.practicum.kafka.telemetry.event.ScenarioRemovedEventAvro;
+import ru.yandex.practicum.kafka.telemetry.event.*;
 import sht.models.hub.*;
 
 @Mapper
@@ -17,7 +15,20 @@ public interface HubEventMapper {
      */
     HubEventMapper INSTANCE = Mappers.getMapper(HubEventMapper.class);
 
-    static SpecificRecordBase toSpecificRecordBase(HubEvent event) {
+    @Mapping(target = "payload", source = ".", qualifiedByName = "getPayload")
+    HubEventAvro toHubEventAvro(HubEvent event);
+
+    @Mapping(source = "deviceType", target = "type")
+    DeviceAddedEventAvro toDeviceAddedEventAvro(DeviceAddedEvent event);
+
+    DeviceRemovedEventAvro toDeviceRemovedEventAvro(DeviceRemovedEvent event);
+
+    ScenarioAddedEventAvro toScenarioAddedEventAvro(ScenarioAddedEvent event);
+
+    ScenarioRemovedEventAvro toScenarioRemovedEventAvro(ScenarioRemovedEvent event);
+
+    @Named("getPayload")
+    static Object getPayload(HubEvent event) {
         if (event instanceof DeviceAddedEvent deviceAddedEvent) {
             return HubEventMapper.INSTANCE.toDeviceAddedEventAvro(deviceAddedEvent);
         }
@@ -36,13 +47,4 @@ public interface HubEventMapper {
 
         throw new RuntimeException("Не удалось выполнить преобразование типа " + event.getClass().getName() + " в тип " + SpecificRecordBase.class.getName());
     }
-
-    @Mapping(source = "deviceType", target = "type")
-    DeviceAddedEventAvro toDeviceAddedEventAvro(DeviceAddedEvent event);
-
-    DeviceRemovedEventAvro toDeviceRemovedEventAvro(DeviceRemovedEvent event);
-
-    ScenarioAddedEventAvro toScenarioAddedEventAvro(ScenarioAddedEvent event);
-
-    ScenarioRemovedEventAvro toScenarioRemovedEventAvro(ScenarioRemovedEvent event);
 }

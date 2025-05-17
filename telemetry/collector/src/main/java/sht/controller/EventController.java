@@ -31,7 +31,7 @@ public class EventController {
      */
     @PostMapping("/hubs")
     public void collectHubEvent(@RequestBody @Valid HubEvent event) {
-        kafkaClient.getProducer().send(new ProducerRecord<>(CollectorKafkaTopics.TELEMETRY_HUBS_V1, HubEventMapper.toSpecificRecordBase(event)));
+        kafkaClient.getProducer().send(new ProducerRecord<>(CollectorKafkaTopics.TELEMETRY_HUBS_V1, HubEventMapper.INSTANCE.toHubEventAvro(event)));
     }
 
     /**
@@ -41,7 +41,7 @@ public class EventController {
      */
     @PostMapping("/sensors")
     public void collectSensorEvent(@RequestBody @Valid SensorEvent event) {
-        kafkaClient.getProducer().send(new ProducerRecord<>(CollectorKafkaTopics.TELEMETRY_SENSORS_V1, SensorEventMapper.toSpecificRecordBase(event)));
+        kafkaClient.getProducer().send(new ProducerRecord<>(CollectorKafkaTopics.TELEMETRY_SENSORS_V1, SensorEventMapper.INSTANCE.toSensorEventAvro(event)));
     }
 
     @PreDestroy

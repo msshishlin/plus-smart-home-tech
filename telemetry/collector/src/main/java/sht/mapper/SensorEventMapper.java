@@ -2,6 +2,8 @@ package sht.mapper;
 
 import org.apache.avro.specific.SpecificRecordBase;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
 import ru.yandex.practicum.kafka.telemetry.event.*;
 import sht.models.sensor.*;
@@ -13,7 +15,21 @@ public interface SensorEventMapper {
      */
     SensorEventMapper INSTANCE = Mappers.getMapper(SensorEventMapper.class);
 
-    static SpecificRecordBase toSpecificRecordBase(SensorEvent event) {
+    @Mapping(target = "payload", source = ".", qualifiedByName = "getPayload")
+    SensorEventAvro toSensorEventAvro(SensorEvent event);
+
+    ClimateSensorAvro toClimateSensorAvro(ClimateSensorEvent event);
+
+    LightSensorAvro toLightSensorAvro(LightSensorEvent event);
+
+    MotionSensorAvro toMotionSensorAvro(MotionSensorEvent event);
+
+    SwitchSensorAvro toSwitchSensorAvro(SwitchSensorEvent event);
+
+    TemperatureSensorAvro toTemperatureSensorAvro(TemperatureSensorEvent event);
+
+    @Named("getPayload")
+    static Object getPayload(SensorEvent event) {
         if (event instanceof ClimateSensorEvent climateSensorEvent) {
             return SensorEventMapper.INSTANCE.toClimateSensorAvro(climateSensorEvent);
         }
@@ -36,14 +52,4 @@ public interface SensorEventMapper {
 
         throw new RuntimeException("Не удалось выполнить преобразование типа " + event.getClass().getName() + " в тип " + SpecificRecordBase.class.getName());
     }
-
-    ClimateSensorAvro toClimateSensorAvro(ClimateSensorEvent event);
-
-    LightSensorAvro toLightSensorAvro(LightSensorEvent event);
-
-    MotionSensorAvro toMotionSensorAvro(MotionSensorEvent event);
-
-    SwitchSensorAvro toSwitchSensorAvro(SwitchSensorEvent event);
-
-    TemperatureSensorAvro toTemperatureSensorAvro(TemperatureSensorEvent event);
 }
