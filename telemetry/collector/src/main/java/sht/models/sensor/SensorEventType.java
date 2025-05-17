@@ -5,9 +5,14 @@ package sht.models.sensor;
  */
 public enum SensorEventType {
     /**
-     * Событие климатического датчика.
+     * Событие датчика движения.
      */
-    CLIMATE_SENSOR_EVENT,
+    MOTION_SENSOR_EVENT,
+
+    /**
+     * Событие датчика температуры.
+     */
+    TEMPERATURE_SENSOR_EVENT,
 
     /**
      * Событие датчика освещенности.
@@ -15,17 +20,12 @@ public enum SensorEventType {
     LIGHT_SENSOR_EVENT,
 
     /**
-     * Событие датчика движения.
+     * Событие климатического датчика.
      */
-    MOTION_SENSOR_EVENT,
+    CLIMATE_SENSOR_EVENT,
 
     /**
      * Событие датчика переключателя.
      */
-    SWITCH_SENSOR_EVENT,
-
-    /**
-     * Событие датчика температуры.
-     */
-    TEMPERATURE_SENSOR_EVENT
+    SWITCH_SENSOR_EVENT
 }

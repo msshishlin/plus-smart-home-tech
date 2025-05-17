@@ -5,24 +5,14 @@ package sht.models.hub;
  */
 public enum ScenarioConditionType {
     /**
-     * Уровень углекислого газа.
+     * Движение.
      */
-    CO2LEVEL,
-
-    /**
-     * Влажность.
-     */
-    HUMIDITY,
+    MOTION,
 
     /**
      * Освещенность.
      */
     LUMINOSITY,
-
-    /**
-     * Движение.
-     */
-    MOTION,
 
     /**
      * Переключение.
@@ -32,5 +22,15 @@ public enum ScenarioConditionType {
     /**
      * Температура.
      */
-    TEMPERATURE
+    TEMPERATURE,
+
+    /**
+     * Уровень углекислого газа.
+     */
+    CO2LEVEL,
+
+    /**
+     * Влажность.
+     */
+    HUMIDITY
 }

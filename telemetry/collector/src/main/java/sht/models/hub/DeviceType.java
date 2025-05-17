@@ -5,9 +5,14 @@ package sht.models.hub;
  */
 public enum DeviceType {
     /**
-     * Климатический датчик.
+     * Датчик движения.
      */
-    CLIMATE_SENSOR,
+    MOTION_SENSOR,
+
+    /**
+     * Датчик температуры.
+     */
+    TEMPERATURE_SENSOR,
 
     /**
      * Датчик освещенности.
@@ -15,17 +20,12 @@ public enum DeviceType {
     LIGHT_SENSOR,
 
     /**
-     * Датчик движения.
+     * Климатический датчик.
      */
-    MOTION_SENSOR,
+    CLIMATE_SENSOR,
 
     /**
      * Переключатель.
      */
-    SWITCH_SENSOR,
-
-    /**
-     * Датчик температуры.
-     */
-    TEMPERATURE_SENSOR
+    SWITCH_SENSOR
 }

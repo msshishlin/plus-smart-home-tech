@@ -4,23 +4,23 @@ protocol HubEventProtocol {
 	 * Типы устройств.
 	 */
 	enum DeviceTypeAvro {
-		CLIMATE_SENSOR,
-		LIGHT_SENSOR,
 		MOTION_SENSOR,
-		SWITCH_SENSOR,
-		TEMPERATURE_SENSOR
+		TEMPERATURE_SENSOR,
+		LIGHT_SENSOR,
+		CLIMATE_SENSOR,
+		SWITCH_SENSOR
 	}
 
 	/**
 	 * Типы условий для сценариев.
 	 */
 	enum ConditionTypeAvro {
-		CO2LEVEL,
-		HUMIDITY,
-		LUMINOSITY,
 		MOTION,
+		LUMINOSITY,
 		SWITCH,
-		TEMPERATURE
+		TEMPERATURE,
+		CO2LEVEL,
+		HUMIDITY
 	}
 
 	/**
