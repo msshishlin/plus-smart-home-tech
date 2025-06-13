@@ -77,8 +77,8 @@ enum ActionTypeProto {
 
 message ScenarioAddedEventProto {
   string name = 1;                                    // Название сценария.
-  repeated ScenarioConditionProto conditions = 2;     // Набор условий для активации сценария.
-  repeated DeviceActionProto actions = 3;             // Набор действий при активации сценария.
+  repeated ScenarioConditionProto condition = 2;     // Набор условий для активации сценария.
+  repeated DeviceActionProto action = 3;             // Набор действий при активации сценария.
 }
 
 message ScenarioRemovedEventProto {

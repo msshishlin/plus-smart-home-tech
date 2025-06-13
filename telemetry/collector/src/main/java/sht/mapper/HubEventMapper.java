@@ -9,6 +9,7 @@ import ru.yandex.practicum.grpc.telemetry.event.*;
 import ru.yandex.practicum.kafka.telemetry.event.*;
 
 import java.time.Instant;
+import java.util.List;
 
 @Mapper
 public interface HubEventMapper {
@@ -26,6 +27,8 @@ public interface HubEventMapper {
 
     DeviceRemovedEventAvro toDeviceRemovedEventAvro(DeviceRemovedEventProto event);
 
+    @Mapping(target = "actions", source = "actionList", qualifiedByName = "toDeviceActionList")
+    @Mapping(target = "conditions", source = "conditionList", qualifiedByName = "toScenarioConditionList")
     ScenarioAddedEventAvro toScenarioAddedEventAvro(ScenarioAddedEventProto event);
 
     ScenarioRemovedEventAvro toScenarioRemovedEventAvro(ScenarioRemovedEventProto event);
@@ -56,5 +59,49 @@ public interface HubEventMapper {
             case TEMPERATURE_SENSOR -> DeviceTypeAvro.TEMPERATURE_SENSOR;
             case UNRECOGNIZED -> throw new RuntimeException("Can't map device type");
         };
+    }
+
+    @Named("toDeviceActionList")
+    static List<DeviceActionAvro> toDeviceActionList(List<DeviceActionProto> actions) {
+        return actions.stream().map((action) -> DeviceActionAvro.newBuilder()
+                .setSensorId(action.getSensorId())
+                .setType(switch(action.getType()) {
+                    case ACTIVATE -> ActionTypeAvro.ACTIVATE;
+                    case DEACTIVATE -> ActionTypeAvro.DEACTIVATE;
+                    case INVERSE -> ActionTypeAvro.INVERSE;
+                    case SET_VALUE -> ActionTypeAvro.SET_VALUE;
+                    case UNRECOGNIZED -> throw new RuntimeException("Can't map device action type");
+                })
+                .setValue(action.getValue())
+                .build()
+        ).toList();
+    }
+
+    @Named("toScenarioConditionList")
+    static List<ScenarioConditionAvro> toScenarioConditionList(List<ScenarioConditionProto> conditions) {
+        return conditions.stream().map((condition) -> ScenarioConditionAvro.newBuilder()
+                .setSensorId(condition.getSensorId())
+                .setType(switch (condition.getType()) {
+                    case CO2LEVEL -> ConditionTypeAvro.CO2LEVEL;
+                    case HUMIDITY -> ConditionTypeAvro.HUMIDITY;
+                    case LUMINOSITY -> ConditionTypeAvro.LUMINOSITY;
+                    case MOTION -> ConditionTypeAvro.MOTION;
+                    case TEMPERATURE -> ConditionTypeAvro.TEMPERATURE;
+                    case SWITCH -> ConditionTypeAvro.SWITCH;
+                    case UNRECOGNIZED -> throw new RuntimeException("Can't map scenario condition type");
+                })
+                .setOperation(switch (condition.getOperation()) {
+                    case EQUALS -> ConditionOperationAvro.EQUALS;
+                    case GREATER_THAN -> ConditionOperationAvro.GREATER_THAN;
+                    case LOWER_THAN -> ConditionOperationAvro.LOWER_THAN;
+                    case UNRECOGNIZED -> throw new RuntimeException("Can't map scenario condition operation");
+                })
+                .setValue(switch (condition.getValueCase()) {
+                    case BOOL_VALUE -> condition.getBoolValue();
+                    case INT_VALUE -> condition.getIntValue();
+                    case VALUE_NOT_SET -> null;
+                })
+                .build()
+        ).toList();
     }
 }
