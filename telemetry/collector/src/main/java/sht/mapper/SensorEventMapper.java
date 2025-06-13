@@ -1,12 +1,14 @@
 package sht.mapper;
 
-import org.apache.avro.specific.SpecificRecordBase;
+import com.google.protobuf.Timestamp;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
+import ru.yandex.practicum.grpc.telemetry.event.*;
 import ru.yandex.practicum.kafka.telemetry.event.*;
-import sht.models.sensor.*;
+
+import java.time.Instant;
 
 @Mapper
 public interface SensorEventMapper {
@@ -15,41 +17,35 @@ public interface SensorEventMapper {
      */
     SensorEventMapper INSTANCE = Mappers.getMapper(SensorEventMapper.class);
 
-    @Mapping(target = "payload", source = ".", qualifiedByName = "getPayload")
-    SensorEventAvro toSensorEventAvro(SensorEvent event);
+    @Mapping(target = "payload", source = ".", qualifiedByName = "toAvroPayload")
+    @Mapping(target = "timestamp", source = "timestamp", qualifiedByName = "toInstant")
+    SensorEventAvro toSensorEventAvro(SensorEventProto event);
 
-    ClimateSensorAvro toClimateSensorAvro(ClimateSensorEvent event);
+    ClimateSensorAvro toClimateSensorAvro(ClimateSensorProto event);
 
-    LightSensorAvro toLightSensorAvro(LightSensorEvent event);
+    LightSensorAvro toLightSensorAvro(LightSensorProto event);
 
-    MotionSensorAvro toMotionSensorAvro(MotionSensorEvent event);
+    MotionSensorAvro toMotionSensorAvro(MotionSensorProto event);
 
-    SwitchSensorAvro toSwitchSensorAvro(SwitchSensorEvent event);
+    SwitchSensorAvro toSwitchSensorAvro(SwitchSensorProto event);
 
-    TemperatureSensorAvro toTemperatureSensorAvro(TemperatureSensorEvent event);
+    TemperatureSensorAvro toTemperatureSensorAvro(TemperatureSensorProto event);
 
-    @Named("getPayload")
-    static Object getPayload(SensorEvent event) {
-        if (event instanceof ClimateSensorEvent climateSensorEvent) {
-            return SensorEventMapper.INSTANCE.toClimateSensorAvro(climateSensorEvent);
-        }
+    @Named("toAvroPayload")
+    static Object toAvroPayload(SensorEventProto event) {
+        return switch (event.getPayloadCase()) {
+            case CLIMATE_SENSOR_EVENT -> SensorEventMapper.INSTANCE.toClimateSensorAvro(event.getClimateSensorEvent());
+            case LIGHT_SENSOR_EVENT -> SensorEventMapper.INSTANCE.toLightSensorAvro(event.getLightSensorEvent());
+            case MOTION_SENSOR_EVENT -> SensorEventMapper.INSTANCE.toMotionSensorAvro(event.getMotionSensorEvent());
+            case SWITCH_SENSOR_EVENT -> SensorEventMapper.INSTANCE.toSwitchSensorAvro(event.getSwitchSensorEvent());
+            case TEMPERATURE_SENSOR_EVENT ->
+                    SensorEventMapper.INSTANCE.toTemperatureSensorAvro(event.getTemperatureSensorEvent());
+            case PAYLOAD_NOT_SET -> throw new RuntimeException("Can't map sensor event payload");
+        };
+    }
 
-        if (event instanceof LightSensorEvent lightSensorEvent) {
-            return SensorEventMapper.INSTANCE.toLightSensorAvro(lightSensorEvent);
-        }
-
-        if (event instanceof MotionSensorEvent motionSensorEvent) {
-            return SensorEventMapper.INSTANCE.toMotionSensorAvro(motionSensorEvent);
-        }
-
-        if (event instanceof SwitchSensorEvent switchSensorEvent) {
-            return SensorEventMapper.INSTANCE.toSwitchSensorAvro(switchSensorEvent);
-        }
-
-        if (event instanceof TemperatureSensorEvent temperatureSensorEvent) {
-            return SensorEventMapper.INSTANCE.toTemperatureSensorAvro(temperatureSensorEvent);
-        }
-
-        throw new RuntimeException("Не удалось выполнить преобразование типа " + event.getClass().getName() + " в тип " + SpecificRecordBase.class.getName());
+    @Named("toInstant")
+    static Instant toInstant(Timestamp timestamp) {
+        return Instant.ofEpochSecond(timestamp.getSeconds(), timestamp.getNanos());
     }
 }
