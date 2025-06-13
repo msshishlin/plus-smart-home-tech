@@ -4,3 +4,45 @@ package telemetry.message.event;
 
 option java_multiple_files = true;
 option java_package = "ru.yandex.practicum.grpc.telemetry.event";
+
+import "google/protobuf/timestamp.proto";
+
+message SensorEventProto {
+  string id = 1;                                          // Идентификатор датчика.
+  google.protobuf.Timestamp timestamp = 2;                // Временная метка события.
+  string hubId = 3;                                       // Идентификатор хаба.
+
+oneof payload {                                           // Данные события
+    MotionSensorProto motion_sensor_event = 4;            // Данные события датчика движения.
+    TemperatureSensorProto temperature_sensor_event = 5;  // Данные события температурного датчика.
+    LightSensorProto light_sensor_event = 6;              // Данные события датчика освещённости.
+    ClimateSensorProto climate_sensor_event = 7;          // Данные события климатического датчика.
+    SwitchSensorProto switch_sensor_event = 8;            // Данные события датчика-переключателя.
+  }
+}
+
+message MotionSensorProto {
+  int32 link_quality = 1;                                 // Показатель качества связи.
+  bool motion = 2;                                        // Признак наличия движения.
+  int32 voltage = 3;                                      // Напряжение.
+}
+
+message TemperatureSensorProto {
+  int32 temperature_c = 1;                                // Температура по шкале Цельсия.
+  int32 temperature_f = 2;                                // Температура по Фаренгейту.
+}
+
+message LightSensorProto {
+  int32 link_quality = 1;                                 // Уровень сигнала.
+  int32 luminosity = 2;                                   // Уровень освещённости.
+}
+
+message ClimateSensorProto {
+  int32 temperature_c = 1;                                // Температура по шкале Цельсия.
+  int32 humidity = 2;                                     // Влажность.
+  int32 co2_level = 3;                                    // Уровень углекислого газа.
+}
+
+message SwitchSensorProto {
+  bool state = 1;                                         // Состояние переключателя.
+}

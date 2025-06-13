@@ -1,12 +1,14 @@
 package sht.mapper;
 
-import org.apache.avro.specific.SpecificRecordBase;
+import com.google.protobuf.Timestamp;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
+import ru.yandex.practicum.grpc.telemetry.event.*;
 import ru.yandex.practicum.kafka.telemetry.event.*;
-import sht.models.hub.*;
+
+import java.time.Instant;
 
 @Mapper
 public interface HubEventMapper {
@@ -15,36 +17,44 @@ public interface HubEventMapper {
      */
     HubEventMapper INSTANCE = Mappers.getMapper(HubEventMapper.class);
 
-    @Mapping(target = "payload", source = ".", qualifiedByName = "getPayload")
-    HubEventAvro toHubEventAvro(HubEvent event);
+    @Mapping(target = "payload", source = ".", qualifiedByName = "toAvroPayload")
+    @Mapping(target = "timestamp", source = "timestamp", qualifiedByName = "toInstant")
+    HubEventAvro toHubEventAvro(HubEventProto event);
 
-    @Mapping(source = "deviceType", target = "type")
-    DeviceAddedEventAvro toDeviceAddedEventAvro(DeviceAddedEvent event);
+    @Mapping(target = "type", source = "type", qualifiedByName = "toDeviceTypeAvro")
+    DeviceAddedEventAvro toDeviceAddedEventAvro(DeviceAddedEventProto event);
 
-    DeviceRemovedEventAvro toDeviceRemovedEventAvro(DeviceRemovedEvent event);
+    DeviceRemovedEventAvro toDeviceRemovedEventAvro(DeviceRemovedEventProto event);
 
-    ScenarioAddedEventAvro toScenarioAddedEventAvro(ScenarioAddedEvent event);
+    ScenarioAddedEventAvro toScenarioAddedEventAvro(ScenarioAddedEventProto event);
 
-    ScenarioRemovedEventAvro toScenarioRemovedEventAvro(ScenarioRemovedEvent event);
+    ScenarioRemovedEventAvro toScenarioRemovedEventAvro(ScenarioRemovedEventProto event);
 
-    @Named("getPayload")
-    static Object getPayload(HubEvent event) {
-        if (event instanceof DeviceAddedEvent deviceAddedEvent) {
-            return HubEventMapper.INSTANCE.toDeviceAddedEventAvro(deviceAddedEvent);
-        }
+    @Named("toAvroPayload")
+    static Object toAvroPayload(HubEventProto event) {
+        return switch (event.getPayloadCase()) {
+            case DEVICE_ADDED -> HubEventMapper.INSTANCE.toDeviceAddedEventAvro(event.getDeviceAdded());
+            case DEVICE_REMOVED -> HubEventMapper.INSTANCE.toDeviceRemovedEventAvro(event.getDeviceRemoved());
+            case SCENARIO_ADDED -> HubEventMapper.INSTANCE.toScenarioAddedEventAvro(event.getScenarioAdded());
+            case SCENARIO_REMOVED -> HubEventMapper.INSTANCE.toScenarioRemovedEventAvro(event.getScenarioRemoved());
+            case PAYLOAD_NOT_SET -> throw new RuntimeException("Can't map hub event payload");
+        };
+    }
 
-        if (event instanceof DeviceRemovedEvent deviceRemovedEvent) {
-            return HubEventMapper.INSTANCE.toDeviceRemovedEventAvro(deviceRemovedEvent);
-        }
+    @Named("toInstant")
+    static Instant toInstant(Timestamp timestamp) {
+        return Instant.ofEpochSecond(timestamp.getSeconds(), timestamp.getNanos());
+    }
 
-        if (event instanceof ScenarioAddedEvent scenarioAddedEvent) {
-            return HubEventMapper.INSTANCE.toScenarioAddedEventAvro(scenarioAddedEvent);
-        }
-
-        if (event instanceof ScenarioRemovedEvent scenarioRemovedEvent) {
-            return HubEventMapper.INSTANCE.toScenarioRemovedEventAvro(scenarioRemovedEvent);
-        }
-
-        throw new RuntimeException("Не удалось выполнить преобразование типа " + event.getClass().getName() + " в тип " + SpecificRecordBase.class.getName());
+    @Named("toDeviceTypeAvro")
+    static DeviceTypeAvro toDeviceTypeAvro(DeviceTypeProto type) {
+        return switch (type) {
+            case CLIMATE_SENSOR -> DeviceTypeAvro.CLIMATE_SENSOR;
+            case LIGHT_SENSOR -> DeviceTypeAvro.LIGHT_SENSOR;
+            case MOTION_SENSOR -> DeviceTypeAvro.MOTION_SENSOR;
+            case SWITCH_SENSOR -> DeviceTypeAvro.SWITCH_SENSOR;
+            case TEMPERATURE_SENSOR -> DeviceTypeAvro.TEMPERATURE_SENSOR;
+            case UNRECOGNIZED -> throw new RuntimeException("Can't map device type");
+        };
     }
 }

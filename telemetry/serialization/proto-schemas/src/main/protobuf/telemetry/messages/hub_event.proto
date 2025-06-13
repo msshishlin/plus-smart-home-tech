@@ -4,3 +4,83 @@ package telemetry.message.event;
 
 option java_multiple_files = true;
 option java_package = "ru.yandex.practicum.grpc.telemetry.event";
+
+import "google/protobuf/timestamp.proto";
+
+message HubEventProto {
+  string hub_id = 1;                                  // Идентификатор хаба.
+  google.protobuf.Timestamp timestamp = 2;            // Временная метка события.
+
+  oneof payload {                                     // Данные события.
+    DeviceAddedEventProto device_added = 3;           // Данные события добавления устройства.
+    DeviceRemovedEventProto device_removed = 4;       // Данные события удаления устройства.
+    ScenarioAddedEventProto scenario_added = 5;       // Данные события добавления нового сценария.
+    ScenarioRemovedEventProto scenario_removed = 6;   // Данные события удаления сценария.
+  }
+}
+
+message DeviceAddedEventProto {
+  string id = 1;                                      // Идентификатор устройства.
+  DeviceTypeProto type = 2;                           // Тип устройства.
+}
+
+enum DeviceTypeProto {
+  MOTION_SENSOR = 0;                                  // Датчик движения.
+  TEMPERATURE_SENSOR = 1;                             // Датчик температуры.
+  LIGHT_SENSOR = 2;                                   // Датчик освещённости.
+  CLIMATE_SENSOR = 3;                                 // Датчик контроля климата.
+  SWITCH_SENSOR = 4;                                  // Переключатель.
+}
+
+message DeviceRemovedEventProto {
+  string id = 1;                                      // Идентификатор устройства.
+}
+
+message ScenarioConditionProto {
+  string sensor_id = 1;                               // Идентификатор датчика.
+  ConditionTypeProto type = 2;                        // Тип условия.
+  ConditionOperationProto operation = 3;              // Тип операции.
+
+  oneof value {                                       // Значение датчика.
+    bool bool_value = 4;                              // Логическое значение.
+    int32 int_value = 5;                              // Целочисленное значение.
+  }
+}
+
+enum ConditionTypeProto {
+  MOTION = 0;                                         // Движение.
+  LUMINOSITY = 1;                                     // Освещенность.
+  SWITCH = 2;                                         // Переключение.
+  TEMPERATURE = 3;                                    // Температура.
+  CO2LEVEL = 4;                                       // Уровень углекислого газа.
+  HUMIDITY = 5;                                       // Влажность.
+}
+
+enum ConditionOperationProto {
+  EQUALS = 0;                                         // Равно.
+  GREATER_THAN = 1;                                   // Больше чем.
+  LOWER_THAN = 2;                                     // Меньше чем.
+}
+
+message DeviceActionProto {
+  string sensor_id = 1;                               // Идентификатор датчика.
+  ActionTypeProto type = 2;                           // Тип действия с датчиком.
+  optional int32 value = 3;                           // Значение.
+}
+
+enum ActionTypeProto {
+  ACTIVATE = 0;                                       // Активация.
+  DEACTIVATE = 1;                                     // Деактивация.
+  INVERSE = 2;                                        // Преобразование.
+  SET_VALUE = 3;                                      // Установка значения.
+}
+
+message ScenarioAddedEventProto {
+  string name = 1;                                    // Название сценария.
+  repeated ScenarioConditionProto condition = 2;      // Набор условий для активации сценария.
+  repeated DeviceActionProto action = 3;              // Набор действий при активации сценария.
+}
+
+message ScenarioRemovedEventProto {
+  string name = 1;                                    // Название сценария.
+}

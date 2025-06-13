@@ -1,47 +1,72 @@
 package sht.controller;
 
+import com.google.protobuf.Empty;
+import io.grpc.Status;
+import io.grpc.StatusRuntimeException;
+import io.grpc.stub.StreamObserver;
 import jakarta.annotation.PreDestroy;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import net.devh.boot.grpc.server.service.GrpcService;
 import org.apache.kafka.clients.producer.ProducerRecord;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import ru.yandex.practicum.grpc.telemetry.collector.CollectorControllerGrpc;
+import ru.yandex.practicum.grpc.telemetry.event.HubEventProto;
+import ru.yandex.practicum.grpc.telemetry.event.SensorEventProto;
 import sht.kafka.CollectorKafkaClient;
 import sht.kafka.CollectorKafkaTopics;
 import sht.mapper.HubEventMapper;
 import sht.mapper.SensorEventMapper;
-import sht.models.hub.HubEvent;
-import sht.models.sensor.SensorEvent;
 
-@RequestMapping("/events")
+@GrpcService
 @RequiredArgsConstructor
-@RestController
-public class EventController {
+public class EventController extends CollectorControllerGrpc.CollectorControllerImplBase {
     /**
      * Клиент Kafka.
      */
     private final CollectorKafkaClient kafkaClient;
 
     /**
-     * Эндпоинт для обработки событий от хаба.
+     * Обработка событий от хаба.
      *
-     * @param event данные события хаба (регистрация/удаление устройств в хабе, добавление/удаление сценария умного дома).
+     * @param request данные события хаба (регистрация/удаление устройств в хабе, добавление/удаление сценария умного дома).
      */
-    @PostMapping("/hubs")
-    public void collectHubEvent(@RequestBody @Valid HubEvent event) {
-        kafkaClient.getProducer().send(new ProducerRecord<>(CollectorKafkaTopics.TELEMETRY_HUBS_V1, HubEventMapper.INSTANCE.toHubEventAvro(event)));
+    @Override
+    public void collectHubEvent(HubEventProto request, StreamObserver<Empty> responseObserver) {
+        try {
+            kafkaClient.getProducer().send(new ProducerRecord<>(CollectorKafkaTopics.TELEMETRY_HUBS_V1, HubEventMapper.INSTANCE.toHubEventAvro(request)));
+
+            responseObserver.onNext(Empty.getDefaultInstance());
+            responseObserver.onCompleted();
+        } catch (Exception exception) {
+            responseObserver.onError(
+                    new StatusRuntimeException(
+                            Status.INTERNAL.withDescription(exception.getLocalizedMessage())
+                                    .withCause(exception)
+                    )
+            );
+        }
+
     }
 
     /**
-     * Эндпоинт для обработки событий от датчиков.
+     * Обработка событий от датчиков.
      *
-     * @param event данные события датчика (показания, изменение состояния и т.д).
+     * @param request данные события датчика (показания, изменение состояния и т.д).
      */
-    @PostMapping("/sensors")
-    public void collectSensorEvent(@RequestBody @Valid SensorEvent event) {
-        kafkaClient.getProducer().send(new ProducerRecord<>(CollectorKafkaTopics.TELEMETRY_SENSORS_V1, SensorEventMapper.INSTANCE.toSensorEventAvro(event)));
+    @Override
+    public void collectSensorEvent(SensorEventProto request, StreamObserver<Empty> responseObserver) {
+        try {
+            kafkaClient.getProducer().send(new ProducerRecord<>(CollectorKafkaTopics.TELEMETRY_SENSORS_V1, SensorEventMapper.INSTANCE.toSensorEventAvro(request)));
+
+            responseObserver.onNext(Empty.getDefaultInstance());
+            responseObserver.onCompleted();
+        } catch (Exception exception) {
+            responseObserver.onError(
+                    new StatusRuntimeException(
+                            Status.INTERNAL.withDescription(exception.getLocalizedMessage())
+                                    .withCause(exception)
+                    )
+            );
+        }
     }
 
     @PreDestroy
