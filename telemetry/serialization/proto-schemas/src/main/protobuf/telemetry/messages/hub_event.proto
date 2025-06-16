@@ -76,11 +76,18 @@ enum ActionTypeProto {
 }
 
 message ScenarioAddedEventProto {
-  string name = 1;                                    // Название сценария.
+  string name = 1;                                   // Название сценария.
   repeated ScenarioConditionProto condition = 2;     // Набор условий для активации сценария.
   repeated DeviceActionProto action = 3;             // Набор действий при активации сценария.
 }
 
 message ScenarioRemovedEventProto {
   string name = 1;                                    // Название сценария.
+}
+
+message DeviceActionRequest {
+  string hub_id = 1;                                  // Идентификатор хаба.
+  string scenario_name = 2;                           // Название сценария.
+  DeviceActionProto action = 3;                       // Действие над датчиком.
+  google.protobuf.Timestamp timestamp = 4;            // Временная метка события.
 }
