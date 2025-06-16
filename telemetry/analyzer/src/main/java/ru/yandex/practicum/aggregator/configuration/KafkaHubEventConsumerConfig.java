@@ -2,12 +2,14 @@ package ru.yandex.practicum.aggregator.configuration;
 
 import lombok.*;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
 
 import java.util.Properties;
 
 /**
  * Конфигурация потребителя топика, содержащего данные о событиях в хабе.
  */
+@Configuration
 @ConfigurationProperties("analyzer.kafka.hub-event-consumer")
 @Getter
 @Setter

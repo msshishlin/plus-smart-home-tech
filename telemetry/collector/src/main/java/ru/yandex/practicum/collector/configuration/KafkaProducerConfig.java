@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -12,6 +13,7 @@ import java.util.Properties;
 /**
  * Конфигурация издателя данных Kafka.
  */
+@Configuration
 @ConfigurationProperties("collector.kafka.producer")
 @Getter
 @Setter
