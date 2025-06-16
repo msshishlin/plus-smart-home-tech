@@ -33,7 +33,7 @@ protocol HubEventProtocol {
 	}
 
 	/**
-	 * Событие добавления устройства.
+	 * Тип действия над устройством.
 	 */
 	enum ActionTypeAvro {
 		ACTIVATE,
