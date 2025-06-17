@@ -65,18 +65,6 @@ protocol SensorEventProtocol {
  	 */
 	record TemperatureSensorAvro {
 		/**
-		 * Идентификатор датчика.
- 		 */
-		string id;
-		/**
-		 * Идентификатор хаба, к которому подключён датчик.
- 		 */
-		string hubId;
-		/**
-		 * Метка времени, указывающая, когда произошло событие телеметрии.
- 		 */
-		timestamp_ms timestamp;
-		/**
 		 * Температура в градусах Цельсия.
  		 */
 		int temperature_c;
