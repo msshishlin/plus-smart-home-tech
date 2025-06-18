@@ -9,3 +9,8 @@ spring:
       retry:
         useRandomPolicy: true
         max-interval: 30000
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
