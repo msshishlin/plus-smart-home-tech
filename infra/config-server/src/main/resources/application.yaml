@@ -3,6 +3,9 @@ eureka:
     serviceUrl:
       defaultZone: http://localhost:8761/eureka/
 
+server:
+  port: 0
+
 spring:
   application:
     name: config-server
@@ -13,7 +16,5 @@ spring:
       server:
         native:
           searchLocations:
+            - classpath:config/commerce/{application}
             - classpath:config/telemetry/{application}
-
-server:
-  port: 0

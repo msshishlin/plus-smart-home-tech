@@ -35,7 +35,7 @@ spring:
     name: analyzer
   dataSource:
     driverClassName: org.postgresql.Driver
-    password: 12345
+    password: 1qaz!QAZ
     url: jdbc:postgresql://localhost:6541/analyzer
     username: dbuser
   jpa:
