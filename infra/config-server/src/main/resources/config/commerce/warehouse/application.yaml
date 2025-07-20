@@ -5,11 +5,11 @@ hibernate:
 
 spring:
   application:
-    name: shopping-store
+    name: warehouse
   dataSource:
     driverClassName: org.postgresql.Driver
     password: 1qaz!QAZ
-    url: jdbc:postgresql://localhost:6544/shopping-store
+    url: jdbc:postgresql://localhost:6545/warehouse
     username: dbuser
   jpa:
     hibernate:

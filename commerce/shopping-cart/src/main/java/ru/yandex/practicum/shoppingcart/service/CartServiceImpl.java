@@ -2,7 +2,7 @@ package ru.yandex.practicum.shoppingcart.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.shoppingcart.dto.CartDto;
+import ru.yandex.practicum.interactionapi.dto.CartDto;
 import ru.yandex.practicum.shoppingcart.dto.ChangeProductQuantityRequest;
 import ru.yandex.practicum.shoppingcart.exception.NoProductsInCartException;
 import ru.yandex.practicum.shoppingcart.mapper.CartMapper;
@@ -38,9 +38,10 @@ public class CartServiceImpl implements CartService {
      * @return корзина пользователя.
      */
     private Cart getActiveOrCreateNewCart(String userName) {
-        return cartRepository.findByUserNameAndIsActive(userName, true).orElseGet(() -> {
+        return cartRepository.findByUsernameAndIsActive(userName, true).orElseGet(() -> {
             Cart newCart = Cart.builder()
-                    .userName(userName)
+                    .username(userName)
+                    .isActive(true)
                     .build();
 
             cartRepository.save(newCart);
@@ -49,13 +50,13 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public CartDto getCart(String userName) {
-        return cartMapper.mapToCartDto(getActiveOrCreateNewCart(userName));
+    public CartDto getCart(String username) {
+        return cartMapper.mapToCartDto(getActiveOrCreateNewCart(username));
     }
 
     @Override
-    public CartDto addProductsToCart(String userName, Map<UUID, Integer> products) {
-        Cart cart = getActiveOrCreateNewCart(userName);
+    public CartDto addProductsToCart(String username, Map<UUID, Integer> products) {
+        Cart cart = getActiveOrCreateNewCart(username);
         cart.setProducts(products);
 
         cartRepository.save(cart);
@@ -63,8 +64,8 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public CartDto changeProductQuantity(String userName, ChangeProductQuantityRequest request) {
-        Cart cart = getActiveOrCreateNewCart(userName);
+    public CartDto changeProductQuantity(String username, ChangeProductQuantityRequest request) {
+        Cart cart = getActiveOrCreateNewCart(username);
         if (!cart.getProducts().containsKey(request.getProductId())) {
             throw new NoProductsInCartException("Нет искомого товаров в корзине");
         }
@@ -76,8 +77,8 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public CartDto removeProductsFromCart(String userName, Collection<UUID> productIds) {
-        Cart cart = getActiveOrCreateNewCart(userName);
+    public CartDto removeProductsFromCart(String username, Collection<UUID> productIds) {
+        Cart cart = getActiveOrCreateNewCart(username);
         if (!cart.getProducts().keySet().containsAll(productIds)) {
             throw new NoProductsInCartException("Нет искомых товаров в корзине");
         }
@@ -95,8 +96,8 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public void deactivateCart(String userName) {
-        Optional<Cart> cartOptional = cartRepository.findByUserNameAndIsActive(userName, true);
+    public void deactivateCart(String username) {
+        Optional<Cart> cartOptional = cartRepository.findByUsernameAndIsActive(username, true);
         if (cartOptional.isEmpty()) {
             return;
         }

@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.shoppingcart.dto.CartDto;
+import ru.yandex.practicum.interactionapi.dto.CartDto;
 import ru.yandex.practicum.shoppingcart.dto.ChangeProductQuantityRequest;
 import ru.yandex.practicum.shoppingcart.service.CartService;
 
@@ -25,65 +25,65 @@ public class CartController {
     /**
      * Сервис для работы с корзинами пользователей.
      */
-    private CartService cartService;
+    private final CartService cartService;
 
     /**
      * Получить корзину пользователя.
      *
-     * @param userName имя пользователя.
+     * @param username имя пользователя.
      * @return корзина пользователя.
      */
     @GetMapping
-    public CartDto getCart(@NotEmpty @RequestParam String userName) {
-        return cartService.getCart(userName);
+    public CartDto getCart(@NotEmpty @RequestParam String username) {
+        return cartService.getCart(username);
     }
 
     /**
      * Добавить товары в корзину пользователя.
      *
-     * @param userName имя пользователя.
+     * @param username имя пользователя.
      * @param products список товаров.
      * @return корзина пользователя.
      */
     @PutMapping
-    public CartDto addProductsToCart(@NotEmpty @RequestParam String userName,
+    public CartDto addProductsToCart(@NotEmpty @RequestParam String username,
                                      @NotNull @RequestBody Map<UUID, Integer> products) {
-        return cartService.addProductsToCart(userName, products);
+        return cartService.addProductsToCart(username, products);
     }
 
     /**
      * Изменить количество товара в корзине пользователя.
      *
-     * @param userName имя пользователя.
+     * @param username имя пользователя.
      * @param request  Запрос на изменение количества товара в корзине.
      * @return корзина пользователя.
      */
     @PostMapping("/change-quantity")
-    public CartDto changeProductQuantity(@NotEmpty @RequestParam String userName,
+    public CartDto changeProductQuantity(@NotEmpty @RequestParam String username,
                                          @RequestBody @Valid ChangeProductQuantityRequest request) {
-        return cartService.changeProductQuantity(userName, request);
+        return cartService.changeProductQuantity(username, request);
     }
 
     /**
      * Удалить товары из корзины пользователя.
      *
-     * @param userName   имя пользователя.
+     * @param username   имя пользователя.
      * @param productIds идентификаторы удаляемых продуктов.
      * @return корзина пользователя.
      */
     @PostMapping("/remove")
-    public CartDto removeProductsFromCart(@NotEmpty @RequestParam String userName,
+    public CartDto removeProductsFromCart(@NotEmpty @RequestParam String username,
                                           @NotNull @RequestBody Collection<UUID> productIds) {
-        return cartService.removeProductsFromCart(userName, productIds);
+        return cartService.removeProductsFromCart(username, productIds);
     }
 
     /**
      * Деактивировать корзину пользователя.
      *
-     * @param userName имя пользователя.
+     * @param username имя пользователя.
      */
     @DeleteMapping
-    public void deactivateCart(@NotEmpty @RequestParam String userName) {
-        cartService.deactivateCart(userName);
+    public void deactivateCart(@NotEmpty @RequestParam String username) {
+        cartService.deactivateCart(username);
     }
 }

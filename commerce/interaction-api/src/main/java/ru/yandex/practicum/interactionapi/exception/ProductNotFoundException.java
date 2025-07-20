@@ -1,4 +1,4 @@
-package ru.yandex.practicum.shoppingstore.exception;
+package ru.yandex.practicum.interactionapi.exception;
 
 import java.util.UUID;
 

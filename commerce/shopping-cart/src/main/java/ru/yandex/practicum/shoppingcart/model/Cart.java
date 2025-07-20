@@ -30,7 +30,7 @@ public class Cart {
      * Имя пользователя.
      */
     @Column(name = "username", nullable = false)
-    private String userName;
+    private String username;
 
     /**
      * Признак, что корзина активна.

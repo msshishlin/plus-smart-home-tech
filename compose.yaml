@@ -68,9 +68,24 @@ services:
     image: postgres:16.1
     container_name: shopping-store-db
     ports:
-      - "6542:5432"
+      - "6544:5432"
     environment:
       - POSTGRES_DB=shopping-store
+      - POSTGRES_USER=dbuser
+      - POSTGRES_PASSWORD=1qaz!QAZ
+    healthcheck:
+      test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
+      timeout: 5s
+      interval: 5s
+      retries: 10
+
+  warehouse-db:
+    image: postgres:16.1
+    container_name: warehouse-db
+    ports:
+      - "6545:5432"
+    environment:
+      - POSTGRES_DB=warehouse
       - POSTGRES_USER=dbuser
       - POSTGRES_PASSWORD=1qaz!QAZ
     healthcheck:
