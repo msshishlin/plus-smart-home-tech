@@ -1,0 +1,22 @@
+hibernate:
+  jdbc:
+    time_zone: UTC
+  show_sql: true
+
+spring:
+  application:
+    name: warehouse
+  dataSource:
+    driverClassName: org.postgresql.Driver
+    password: 1qaz!QAZ
+    url: jdbc:postgresql://localhost:6545/warehouse
+    username: dbuser
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        format_sql: true
+  sql:
+    init:
+      mode: always
