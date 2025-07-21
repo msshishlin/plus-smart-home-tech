@@ -2,8 +2,9 @@ package ru.yandex.practicum.shoppingcart.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.interactionapi.dto.CartDto;
-import ru.yandex.practicum.shoppingcart.dto.ChangeProductQuantityRequest;
+import ru.yandex.practicum.interactionapi.dto.shoppingcart.CartDto;
+import ru.yandex.practicum.interactionapi.dto.shoppingcart.ChangeProductQuantityRequest;
+import ru.yandex.practicum.interactionapi.feign.WarehouseClient;
 import ru.yandex.practicum.shoppingcart.exception.NoProductsInCartException;
 import ru.yandex.practicum.shoppingcart.mapper.CartMapper;
 import ru.yandex.practicum.shoppingcart.model.Cart;
@@ -32,6 +33,11 @@ public class CartServiceImpl implements CartService {
     private final CartMapper cartMapper;
 
     /**
+     * Клиент для склад-сервиса.
+     */
+    private final WarehouseClient warehouseClient;
+
+    /**
      * Получить активную или создать новую корзину пользователя.
      *
      * @param userName имя пользователя.
@@ -58,6 +64,8 @@ public class CartServiceImpl implements CartService {
     public CartDto addProductsToCart(String username, Map<UUID, Integer> products) {
         Cart cart = getActiveOrCreateNewCart(username);
         cart.setProducts(products);
+
+        warehouseClient.checkProductQuantity(cartMapper.mapToCartDto(cart));
 
         cartRepository.save(cart);
         return cartMapper.mapToCartDto(cart);

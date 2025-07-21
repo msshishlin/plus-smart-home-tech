@@ -1,32 +1,36 @@
-package ru.yandex.practicum.shoppingstore.service;
+package ru.yandex.practicum.interactionapi.feign;
 
+import jakarta.validation.Valid;
+import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import ru.yandex.practicum.interactionapi.dto.shoppingstore.ProductDto;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.interactionapi.dto.shoppingstore.ProductCategory;
+import ru.yandex.practicum.interactionapi.dto.shoppingstore.ProductDto;
 import ru.yandex.practicum.interactionapi.dto.shoppingstore.QuantityState;
 
 import java.util.UUID;
 
-/**
- * Контракт сервиса для работы с товарами.
- */
-public interface ProductService {
+@FeignClient(name = "shopping-store")
+public interface ShoppingStoreClient {
     /**
      * Создание нового товара.
      *
      * @param productDto товар, продаваемый в интернет-магазине.
      * @return товар, продаваемый в интернет-магазине.
      */
-    ProductDto createProduct(ProductDto productDto);
+    @PutMapping("/api/v1/shopping-store")
+    ProductDto createProduct(@RequestBody @Valid ProductDto productDto);
 
     /**
      * Получить сведения по товару из БД.
      *
-     * @param productId идентификатор товара в БД.
+     * @param productId идентификатор товара.
      * @return товар, продаваемый в интернет-магазине.
      */
-    ProductDto findById(UUID productId);
+    @GetMapping("/api/v1/shopping-store/{productId}")
+    ProductDto findById(@PathVariable UUID productId);
 
     /**
      * Найти все товары, относящиеся к определенной категории.
@@ -35,15 +39,17 @@ public interface ProductService {
      * @param pageable        параметры пагинации.
      * @return коллекция товаров.
      */
-    Page<ProductDto> findByProductCategory(ProductCategory productCategory, Pageable pageable);
+    @GetMapping("/api/v1/shopping-store")
+    Page<ProductDto> findByProductCategory(@RequestParam(name = "category") ProductCategory productCategory, @PageableDefault Pageable pageable);
 
     /**
-     * Обновить товар.
+     * Обновление товара.
      *
      * @param productDto товар, продаваемый в интернет-магазине.
      * @return товар, продаваемый в интернет-магазине.
      */
-    ProductDto updateProduct(ProductDto productDto);
+    @PostMapping("/api/v1/shopping-store")
+    ProductDto updateProduct(@RequestBody @Valid ProductDto productDto);
 
     /**
      * Изменить статус остатка товара.
@@ -52,13 +58,15 @@ public interface ProductService {
      * @param quantityState новый статус остатка товара.
      * @return признак успешности обновления статуса остатка товара.
      */
-    boolean setQuantityState(UUID productId, QuantityState quantityState);
+    @PostMapping("/api/v1/shopping-store/quantityState")
+    boolean setQuantityState(@RequestParam UUID productId, @RequestParam QuantityState quantityState);
 
     /**
-     * Удалить товар.
+     * Удаление товара.
      *
-     * @param productId идентификатор товара.
+     * @param productId товар, продаваемый в интернет-магазине.
      * @return признак успешности удаления товара.
      */
-    boolean deleteProduct(UUID productId);
+    @PostMapping("/api/v1/shopping-store/removeProductFromStore")
+    boolean removeProduct(@RequestBody @Valid UUID productId);
 }

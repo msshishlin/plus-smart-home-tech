@@ -1,13 +1,10 @@
-package ru.yandex.practicum.shoppingstore.dto;
+package ru.yandex.practicum.interactionapi.dto.shoppingstore;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.Builder;
 import lombok.Data;
-import ru.yandex.practicum.shoppingstore.model.ProductCategory;
-import ru.yandex.practicum.shoppingstore.model.ProductState;
-import ru.yandex.practicum.shoppingstore.model.QuantityState;
 
 import java.util.UUID;
 

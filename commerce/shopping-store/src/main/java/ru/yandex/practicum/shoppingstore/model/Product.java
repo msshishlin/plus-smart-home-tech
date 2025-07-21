@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.JdbcType;
 import org.hibernate.dialect.PostgreSQLEnumJdbcType;
+import ru.yandex.practicum.interactionapi.dto.shoppingstore.ProductCategory;
+import ru.yandex.practicum.interactionapi.dto.shoppingstore.ProductState;
+import ru.yandex.practicum.interactionapi.dto.shoppingstore.QuantityState;
 
 import java.util.UUID;
 

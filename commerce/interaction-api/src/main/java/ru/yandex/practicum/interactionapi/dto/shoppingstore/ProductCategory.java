@@ -1,4 +1,4 @@
-package ru.yandex.practicum.shoppingstore.model;
+package ru.yandex.practicum.interactionapi.dto.shoppingstore;
 
 /**
  * Категория товара.

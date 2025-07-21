@@ -5,12 +5,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.interactionapi.exception.ProductNotFoundException;
-import ru.yandex.practicum.shoppingstore.dto.ProductDto;
+import ru.yandex.practicum.interactionapi.dto.shoppingstore.ProductDto;
 import ru.yandex.practicum.shoppingstore.mapper.ProductMapper;
 import ru.yandex.practicum.shoppingstore.model.Product;
-import ru.yandex.practicum.shoppingstore.model.ProductCategory;
-import ru.yandex.practicum.shoppingstore.model.ProductState;
-import ru.yandex.practicum.shoppingstore.model.QuantityState;
+import ru.yandex.practicum.interactionapi.dto.shoppingstore.ProductCategory;
+import ru.yandex.practicum.interactionapi.dto.shoppingstore.ProductState;
+import ru.yandex.practicum.interactionapi.dto.shoppingstore.QuantityState;
 import ru.yandex.practicum.shoppingstore.repository.ProductRepository;
 
 import java.util.UUID;

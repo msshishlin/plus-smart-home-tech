@@ -1,5 +1,10 @@
-package ru.yandex.practicum.shoppingcart.service;
+package ru.yandex.practicum.interactionapi.feign;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.interactionapi.dto.shoppingcart.CartDto;
 import ru.yandex.practicum.interactionapi.dto.shoppingcart.ChangeProductQuantityRequest;
 
@@ -7,17 +12,16 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.UUID;
 
-/**
- * Контракт сервиса для работы с корзинами пользователей.
- */
-public interface CartService {
+@FeignClient(name = "shopping-cart")
+public interface ShoppingCartClient {
     /**
      * Получить корзину пользователя.
      *
      * @param username имя пользователя.
      * @return корзина пользователя.
      */
-    CartDto getCart(String username);
+    @GetMapping("/api/v1/shopping-cart")
+    CartDto getCart(@NotEmpty @RequestParam String username);
 
     /**
      * Добавить товары в корзину пользователя.
@@ -26,7 +30,8 @@ public interface CartService {
      * @param products список товаров.
      * @return корзина пользователя.
      */
-    CartDto addProductsToCart(String username, Map<UUID, Integer> products);
+    @PutMapping("/api/v1/shopping-cart")
+    CartDto addProductsToCart(@NotEmpty @RequestParam String username, @NotNull @RequestBody Map<UUID, Integer> products);
 
     /**
      * Изменить количество товара в корзине пользователя.
@@ -35,7 +40,8 @@ public interface CartService {
      * @param request  Запрос на изменение количества товара в корзине.
      * @return корзина пользователя.
      */
-    CartDto changeProductQuantity(String username, ChangeProductQuantityRequest request);
+    @PostMapping("/api/v1/shopping-cart/change-quantity")
+    CartDto changeProductQuantity(@NotEmpty @RequestParam String username, @RequestBody @Valid ChangeProductQuantityRequest request);
 
     /**
      * Удалить товары из корзины пользователя.
@@ -44,12 +50,14 @@ public interface CartService {
      * @param productIds идентификаторы удаляемых продуктов.
      * @return корзина пользователя.
      */
-    CartDto removeProductsFromCart(String username, Collection<UUID> productIds);
+    @PostMapping("/api/v1/shopping-cart/remove")
+    CartDto removeProductsFromCart(@NotEmpty @RequestParam String username, @NotNull @RequestBody Collection<UUID> productIds);
 
     /**
      * Деактивировать корзину пользователя.
      *
      * @param username имя пользователя.
      */
-    void deactivateCart(String username);
+    @DeleteMapping("/api/v1/shopping-cart")
+    void deactivateCart(@NotEmpty @RequestParam String username);
 }
