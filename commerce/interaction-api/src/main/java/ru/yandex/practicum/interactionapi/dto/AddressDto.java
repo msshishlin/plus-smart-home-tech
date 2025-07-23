@@ -1,10 +1,10 @@
-package ru.yandex.practicum.interactionapi.dto.warehouse;
+package ru.yandex.practicum.interactionapi.dto;
 
 import lombok.Builder;
 import lombok.Data;
 
 /**
- * Представление адреса склада в системе.
+ * Представление адреса в системе.
  */
 @Builder(toBuilder = true)
 @Data

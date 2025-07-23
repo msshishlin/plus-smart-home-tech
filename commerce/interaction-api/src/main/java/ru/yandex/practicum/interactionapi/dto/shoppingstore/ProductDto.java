@@ -37,7 +37,7 @@ public class ProductDto {
     private String imageSrc;
 
     /**
-     * Статус, перечисляющий состояние остатка как свойство товара
+     * Статус, перечисляющий состояние остатка как свойство товара.
      */
     @NotNull
     private QuantityState quantityState;
@@ -58,5 +58,5 @@ public class ProductDto {
      */
     @NotNull
     @Positive
-    private float price;
+    private Float price;
 }

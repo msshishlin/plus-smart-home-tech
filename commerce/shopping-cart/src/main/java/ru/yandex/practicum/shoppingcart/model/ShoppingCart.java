@@ -15,16 +15,16 @@ import java.util.UUID;
 @Getter
 @NoArgsConstructor
 @Setter
-@Table(name = "cart")
+@Table(name = "shopping_carts")
 @ToString
-public class Cart {
+public class ShoppingCart {
     /**
      * Идентификатор корзины.
      */
-    @Column(name = "cart_id")
+    @Column(name = "shopping_cart_id")
     @GeneratedValue(strategy = GenerationType.UUID)
     @Id
-    private UUID cartId;
+    private UUID shoppingCartId;
 
     /**
      * Имя пользователя.
@@ -39,9 +39,9 @@ public class Cart {
     private boolean isActive;
 
     /**
-     * Коллекция товаров в корзине.
+     * Отображение идентификатора товара на количество в корзине.
      */
-    @CollectionTable(name = "products", joinColumns = {@JoinColumn(name = "cart_id", referencedColumnName = "cart_id")})
+    @CollectionTable(name = "products", joinColumns = {@JoinColumn(name = "shopping_cart_id", referencedColumnName = "shopping_cart_id")})
     @Column(name = "quantity", nullable = false)
     @ElementCollection
     @MapKeyColumn(name = "product_id")

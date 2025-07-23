@@ -11,7 +11,7 @@ import java.util.UUID;
  */
 @Builder(toBuilder = true)
 @Data
-public class CartDto {
+public class ShoppingCartDto {
     /**
      * Идентификатор корзины в БД.
      */
