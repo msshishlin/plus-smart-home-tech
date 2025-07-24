@@ -1,5 +1,6 @@
 package ru.yandex.practicum.interactionapi.dto.shoppingcart;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
 
@@ -15,10 +16,12 @@ public class ShoppingCartDto {
     /**
      * Идентификатор корзины в БД.
      */
+    @NotNull
     private UUID shoppingCartId;
 
     /**
      * Отображение идентификатора товара на отобранное количество.
      */
+    @NotNull
     private Map<UUID, Integer> products;
 }

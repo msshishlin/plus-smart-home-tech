@@ -13,6 +13,9 @@ import ru.yandex.practicum.interactionapi.exception.shoppingstore.ProductNotFoun
 
 import java.util.UUID;
 
+/**
+ * Контракт клиента для сервиса витрины товаров.
+ */
 @FeignClient(name = "shopping-store")
 public interface ShoppingStoreClient {
     /**

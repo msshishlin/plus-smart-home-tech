@@ -3,13 +3,16 @@ hibernate:
     time_zone: UTC
   show_sql: true
 
+server:
+  port: 0
+
 spring:
   application:
     name: warehouse
   dataSource:
     driverClassName: org.postgresql.Driver
     password: 1qaz!QAZ
-    url: jdbc:postgresql://localhost:6545/warehouse
+    url: jdbc:postgresql://localhost:6547/warehouse
     username: dbuser
   jpa:
     hibernate:

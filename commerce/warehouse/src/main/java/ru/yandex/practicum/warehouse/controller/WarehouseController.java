@@ -5,17 +5,18 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RestController;
 import ru.yandex.practicum.interactionapi.dto.AddressDto;
 import ru.yandex.practicum.interactionapi.dto.shoppingcart.ShoppingCartDto;
-import ru.yandex.practicum.interactionapi.dto.warehouse.AddProductToWarehouseRequest;
-import ru.yandex.practicum.interactionapi.dto.warehouse.BookedProductsDto;
-import ru.yandex.practicum.interactionapi.dto.warehouse.NewProductInWarehouseRequest;
+import ru.yandex.practicum.interactionapi.dto.warehouse.*;
+import ru.yandex.practicum.interactionapi.exception.warehouse.NoOrderBookingFoundException;
 import ru.yandex.practicum.interactionapi.exception.warehouse.NoSpecifiedProductInWarehouseException;
-import ru.yandex.practicum.interactionapi.exception.warehouse.ProductInShoppingCartLowQuantityInWarehouseException;
+import ru.yandex.practicum.interactionapi.exception.warehouse.ProductInShoppingCartNotInWarehouse;
 import ru.yandex.practicum.interactionapi.exception.warehouse.SpecifiedProductAlreadyInWarehouseException;
 import ru.yandex.practicum.interactionapi.feign.WarehouseClient;
-import ru.yandex.practicum.warehouse.service.ProductService;
+import ru.yandex.practicum.warehouse.service.WarehouseService;
 
 import java.security.SecureRandom;
+import java.util.Map;
 import java.util.Random;
+import java.util.UUID;
 
 /**
  * Контроллер для работы с товарами на складе.
@@ -25,9 +26,19 @@ import java.util.Random;
 @Slf4j
 public class WarehouseController implements WarehouseClient {
     /**
+     * Список адресов склада.
+     */
+    private static final String[] ADDRESSES = new String[]{"ADDRESS_1", "ADDRESS_2"};
+
+    /**
+     * Текущий адрес склада.
+     */
+    private static final String CURRENT_ADDRESS = ADDRESSES[Random.from(new SecureRandom()).nextInt(0, 1)];
+
+    /**
      * Сервис для работы со товарами на складе.
      */
-    private final ProductService productService;
+    private final WarehouseService warehouseService;
 
     /**
      * {@inheritDoc}
@@ -35,7 +46,7 @@ public class WarehouseController implements WarehouseClient {
     @Override
     public void createNewProductInWarehouse(NewProductInWarehouseRequest newProductInWarehouseRequest) throws SpecifiedProductAlreadyInWarehouseException {
         log.info("Adding new product to warehouse - {}", newProductInWarehouseRequest);
-        productService.createNewProductInWarehouse(newProductInWarehouseRequest);
+        warehouseService.createNewProductInWarehouse(newProductInWarehouseRequest);
     }
 
     /**
@@ -44,23 +55,44 @@ public class WarehouseController implements WarehouseClient {
     @Override
     public void addProductToWarehouse(AddProductToWarehouseRequest addProductToWarehouseRequest) throws NoSpecifiedProductInWarehouseException {
         log.info("Adding quantity of product to warehouse - {}", addProductToWarehouseRequest);
-        productService.addProductToWarehouse(addProductToWarehouseRequest);
+        warehouseService.addProductToWarehouse(addProductToWarehouseRequest);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public BookedProductsDto checkProductQuantity(ShoppingCartDto shoppingCartDto) throws ProductInShoppingCartLowQuantityInWarehouseException {
+    public BookedProductsDto checkProductQuantity(ShoppingCartDto shoppingCartDto) throws ProductInShoppingCartNotInWarehouse {
         log.info("Checking quantity of products - {}", shoppingCartDto);
-        return productService.checkProductQuantity(shoppingCartDto);
+        return warehouseService.checkProductQuantity(shoppingCartDto);
     }
 
-    // TODO: blank
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public BookedProductsDto assemblyProductsForOrder(AssemblyProductsForOrderRequest assemblyProductsForOrderRequest) throws ProductInShoppingCartNotInWarehouse {
+        log.info("Assembly products for order - {}", assemblyProductsForOrderRequest);
+        return warehouseService.assemblyProductsForOrder(assemblyProductsForOrderRequest);
+    }
 
-    private static final String[] ADDRESSES = new String[]{"ADDRESS_1", "ADDRESS_2"};
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void shippedToDelivery(ShippedToDeliveryRequest shippedToDeliveryRequest) throws NoOrderBookingFoundException {
+        log.info("Pass products to delivery - {}", shippedToDeliveryRequest);
+        warehouseService.shippedToDelivery(shippedToDeliveryRequest);
+    }
 
-    private static final String CURRENT_ADDRESS = ADDRESSES[Random.from(new SecureRandom()).nextInt(0, 1)];
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void acceptReturnOfProducts(Map<UUID, Integer> products) {
+        log.info("Accept return of products - {}", products);
+        warehouseService.acceptReturnOfProducts(products);
+    }
 
     /**
      * {@inheritDoc}

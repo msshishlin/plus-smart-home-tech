@@ -49,11 +49,56 @@ services:
       interval: 5s
       retries: 10
 
+  delivery-db:
+    image: postgres:16.1
+    container_name: delivery-db
+    ports:
+      - "6542:5432"
+    environment:
+      - POSTGRES_DB=delivery
+      - POSTGRES_USER=dbuser
+      - POSTGRES_PASSWORD=1qaz!QAZ
+    healthcheck:
+      test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
+      timeout: 5s
+      interval: 5s
+      retries: 10
+
+  order-db:
+    image: postgres:16.1
+    container_name: order-db
+    ports:
+      - "6543:5432"
+    environment:
+      - POSTGRES_DB=order
+      - POSTGRES_USER=dbuser
+      - POSTGRES_PASSWORD=1qaz!QAZ
+    healthcheck:
+      test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
+      timeout: 5s
+      interval: 5s
+      retries: 10
+
+  payment-db:
+    image: postgres:16.1
+    container_name: payment-db
+    ports:
+      - "6544:5432"
+    environment:
+      - POSTGRES_DB=payment
+      - POSTGRES_USER=dbuser
+      - POSTGRES_PASSWORD=1qaz!QAZ
+    healthcheck:
+      test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
+      timeout: 5s
+      interval: 5s
+      retries: 10
+
   shopping-cart-db:
     image: postgres:16.1
     container_name: shopping-cart-db
     ports:
-      - "6543:5432"
+      - "6545:5432"
     environment:
       - POSTGRES_DB=shopping-cart
       - POSTGRES_USER=dbuser
@@ -68,7 +113,7 @@ services:
     image: postgres:16.1
     container_name: shopping-store-db
     ports:
-      - "6544:5432"
+      - "6546:5432"
     environment:
       - POSTGRES_DB=shopping-store
       - POSTGRES_USER=dbuser
@@ -83,7 +128,7 @@ services:
     image: postgres:16.1
     container_name: warehouse-db
     ports:
-      - "6545:5432"
+      - "6547:5432"
     environment:
       - POSTGRES_DB=warehouse
       - POSTGRES_USER=dbuser

@@ -13,6 +13,9 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * Контракт клиента для сервиса корзины товаров.
+ */
 @FeignClient(name = "shopping-cart")
 public interface ShoppingCartClient {
     /**

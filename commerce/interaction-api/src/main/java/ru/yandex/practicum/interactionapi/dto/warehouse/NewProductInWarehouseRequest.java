@@ -2,7 +2,6 @@ package ru.yandex.practicum.interactionapi.dto.warehouse;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
-import lombok.Builder;
 import lombok.Data;
 
 import java.util.UUID;
@@ -10,7 +9,6 @@ import java.util.UUID;
 /**
  * Запрос на добавление нового товара на склад.
  */
-@Builder(toBuilder = true)
 @Data
 public class NewProductInWarehouseRequest {
     /**

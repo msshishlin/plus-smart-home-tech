@@ -33,7 +33,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     private final ShoppingCartMapper cartMapper;
 
     /**
-     * Клиент для склад-сервиса.
+     * Клиент для сервиса склада товаров.
      */
     private final WarehouseClient warehouseClient;
 
