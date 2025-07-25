@@ -3,13 +3,16 @@ hibernate:
     time_zone: UTC
   show_sql: true
 
+server:
+  port: 0
+
 spring:
   application:
     name: shopping-store
   dataSource:
     driverClassName: org.postgresql.Driver
     password: 1qaz!QAZ
-    url: jdbc:postgresql://localhost:6544/shopping-store
+    url: jdbc:postgresql://localhost:6546/shopping-store
     username: dbuser
   jpa:
     hibernate:

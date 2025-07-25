@@ -9,9 +9,13 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.interactionapi.dto.shoppingstore.ProductCategory;
 import ru.yandex.practicum.interactionapi.dto.shoppingstore.ProductDto;
 import ru.yandex.practicum.interactionapi.dto.shoppingstore.QuantityState;
+import ru.yandex.practicum.interactionapi.exception.shoppingstore.ProductNotFoundException;
 
 import java.util.UUID;
 
+/**
+ * Контракт клиента для сервиса витрины товаров.
+ */
 @FeignClient(name = "shopping-store")
 public interface ShoppingStoreClient {
     /**
@@ -28,9 +32,10 @@ public interface ShoppingStoreClient {
      *
      * @param productId идентификатор товара.
      * @return товар, продаваемый в интернет-магазине.
+     * @throws ProductNotFoundException товар с идентификатором {@code productId} не найден.
      */
     @GetMapping("/api/v1/shopping-store/{productId}")
-    ProductDto findById(@PathVariable UUID productId);
+    ProductDto findById(@PathVariable UUID productId) throws ProductNotFoundException;
 
     /**
      * Найти все товары, относящиеся к определенной категории.
@@ -47,9 +52,10 @@ public interface ShoppingStoreClient {
      *
      * @param productDto товар, продаваемый в интернет-магазине.
      * @return товар, продаваемый в интернет-магазине.
+     * @throws ProductNotFoundException товар с идентификатором {@code productDto.productId} не найден.
      */
     @PostMapping("/api/v1/shopping-store")
-    ProductDto updateProduct(@RequestBody @Valid ProductDto productDto);
+    ProductDto updateProduct(@RequestBody @Valid ProductDto productDto) throws ProductNotFoundException;
 
     /**
      * Изменить статус остатка товара.
@@ -57,16 +63,18 @@ public interface ShoppingStoreClient {
      * @param productId     идентификатор товара.
      * @param quantityState новый статус остатка товара.
      * @return признак успешности обновления статуса остатка товара.
+     * @throws ProductNotFoundException товар с идентификатором {@code productId} не найден.
      */
     @PostMapping("/api/v1/shopping-store/quantityState")
-    boolean setQuantityState(@RequestParam UUID productId, @RequestParam QuantityState quantityState);
+    boolean setQuantityState(@RequestParam UUID productId, @RequestParam QuantityState quantityState) throws ProductNotFoundException;
 
     /**
      * Удаление товара.
      *
      * @param productId товар, продаваемый в интернет-магазине.
      * @return признак успешности удаления товара.
+     * @throws ProductNotFoundException товар с идентификатором {@code productId} не найден.
      */
     @PostMapping("/api/v1/shopping-store/removeProductFromStore")
-    boolean removeProduct(@RequestBody @Valid UUID productId);
+    boolean removeProduct(@RequestBody @Valid UUID productId) throws ProductNotFoundException;
 }
